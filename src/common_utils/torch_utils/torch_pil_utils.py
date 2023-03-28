@@ -42,8 +42,11 @@ def display_images_from_tensor(tensor_img, title=None, display=True, save_path=N
         n_images = tensor_img.shape[0]
         n_rows = int(np.ceil(n_images / n_columns))
 
-        fig = plt.figure(figsize=(4., 4.))
-        grid = ImageGrid(fig, 111, nrows_ncols=(n_rows, n_columns),axes_pad=0.1)
+        axes_pad = 0.1
+        image_fig_size = 0.6
+        figsize = np.array([n_columns , n_rows]) * (image_fig_size + axes_pad)
+        fig = plt.figure(figsize=figsize)
+        grid = ImageGrid(fig, 111, nrows_ncols=(n_rows, n_columns),axes_pad=axes_pad)
 
         for i in range(n_images):
             img = transforms.ToPILImage()(tensor_img[i])

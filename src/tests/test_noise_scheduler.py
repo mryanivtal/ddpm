@@ -9,10 +9,10 @@ from src.noise_scheduler import NoiseScheduler
 
 class MyTestCase(unittest.TestCase):
 
-    def test_something(self):
+    def test_noise_scheduler(self):
         DATASET_DIR = '../../../datasets/cats'
         BATCH_SIZE = 5
-        T_STEPS = 25
+        T_STEPS = 80
 
         cats_dl = create_image_dataloader(DATASET_DIR, batch_size=BATCH_SIZE)
         image = cats_dl.__iter__().__next__()[0]
@@ -20,7 +20,7 @@ class MyTestCase(unittest.TestCase):
         repeats[0] = T_STEPS
         images = image.repeat(repeats)
 
-        noise_scheduler = NoiseScheduler(T_STEPS, beta_start=1e-4, beta_end=2e-2)
+        noise_scheduler = NoiseScheduler(T_STEPS, beta_start=1e-5, beta_end=1e-2)
         noise_steps = torch.arange(T_STEPS)
         noisy_images = noise_scheduler.forward_diffusion_sample(images, noise_steps)
         display_images_from_tensor(images, n_columns=5)
