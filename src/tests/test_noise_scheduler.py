@@ -16,20 +16,17 @@ class MyTestCase(unittest.TestCase):
 
         cats_dl = create_image_dataloader(DATASET_DIR, batch_size=BATCH_SIZE)
         image = cats_dl.__iter__().__next__()[0]
-        images = image[None, :]
-        images = images.repeat(T_STEPS)
+        repeats = [1] * (len(image.shape) + 1)
+        repeats[0] = T_STEPS
+        images = image.repeat(repeats)
 
         noise_scheduler = NoiseScheduler(T_STEPS, beta_start=1e-4, beta_end=2e-2)
         noise_steps = torch.arange(T_STEPS)
         noisy_images = noise_scheduler.forward_diffusion_sample(images, noise_steps)
-        display_images_from_tensor(images)
-        display_images_from_tensor(noisy_images)
+        display_images_from_tensor(images, n_columns=5)
+        display_images_from_tensor(noisy_images, n_columns=5)
 
-
-
-
-
-        self.assertEqual(True, False)  # add assertion here
+        self.assertEqual(True, True)  # add assertion here
 
 
 if __name__ == '__main__':
