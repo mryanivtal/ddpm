@@ -3,7 +3,7 @@ from pathlib import Path
 import torch
 from torch.utils.data import DataLoader
 import numpy as np
-from torchvision.transforms import Lambda
+import torchvision.transforms as transforms
 from src.common_utils.torch_utils.images_dataset import ImagesDataset
 
 
@@ -17,8 +17,13 @@ def create_image_dataloader(dataset_dir: str, batch_size=50, worker_init_fn=seed
     if not Path(dataset_dir).exists():
         raise FileNotFoundError(f'Input data folder does not exist: {Path(dataset_dir).absolute()}')
 
-    fn_ds_transforms = Lambda(lambda x: x / 255)
-    image_ds = ImagesDataset(dataset_dir, transforms=fn_ds_transforms)
+    data_transforms = transforms.Compose([
+        transforms.RandomHorizontalFlip(),
+        transforms.Lambda(lambda t: t/256),         # Scale to [0, 1]
+        transforms.Lambda(lambda t: (t * 2) - 1),   # Scale to [-1, 1]
+    ])
+
+    image_ds = ImagesDataset(dataset_dir, transforms=data_transforms)
     image_dl = DataLoader(image_ds, batch_size=batch_size, shuffle=True, worker_init_fn=worker_init_fn,
                           num_workers=num_workers)
     return image_dl

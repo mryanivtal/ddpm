@@ -21,7 +21,7 @@ def pil_to_flat_tensor(pil_img):
     return tensor_img, img_shape
 
 
-def display_images_from_tensor(tensor_img, title=None, display=True, save_path=None, n_columns=8):
+def display_images_from_tensor(tensor_img, image_transforms=None, title=None, display=True, save_path=None, n_columns=8):
     """
     :param tensor_img: torch.Tensor: 3d image tensor [c, w, h] or 4d images tensor [n, c, w, h]
     :param title: str: title for plot
@@ -31,6 +31,9 @@ def display_images_from_tensor(tensor_img, title=None, display=True, save_path=N
     :return: None
     """
     tensor_img = tensor_img.detach()
+
+    if image_transforms is not None:
+        tensor_img = image_transforms(tensor_img)
 
     if len(tensor_img.shape) == 3:
         tensor_img = transforms.ToPILImage()(tensor_img)

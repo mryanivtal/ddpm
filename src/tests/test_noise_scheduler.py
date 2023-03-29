@@ -1,6 +1,7 @@
 import unittest
 
 import torch
+from torchvision.transforms import transforms
 
 from src.common_utils.torch_utils.dataloader_utils import create_image_dataloader
 from src.common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
@@ -20,11 +21,18 @@ class MyTestCase(unittest.TestCase):
         repeats[0] = T_STEPS
         images = image.repeat(repeats)
 
-        noise_scheduler = NoiseScheduler(T_STEPS, beta_start=1e-5, beta_end=1e-2)
+        noise_scheduler = NoiseScheduler(T_STEPS, beta_start=1e-4, beta_end=5e-2)
         noise_steps = torch.arange(T_STEPS)
         noisy_images = noise_scheduler.forward_diffusion_sample(images, noise_steps)
-        display_images_from_tensor(images, n_columns=5)
-        display_images_from_tensor(noisy_images, n_columns=5)
+
+        inverse_transforms = transforms.Compose([
+            transforms.Lambda(lambda t: (t + 1) / 2),
+            transforms.Lambda(lambda t: t * 256),
+            transforms.Lambda(lambda t: t.type(torch.uint8))
+        ])
+
+        display_images_from_tensor(images, image_transforms=inverse_transforms, n_columns=5)
+        display_images_from_tensor(noisy_images, image_transforms=inverse_transforms,n_columns=5)
 
         self.assertEqual(True, True)  # add assertion here
 
