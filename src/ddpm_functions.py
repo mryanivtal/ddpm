@@ -48,7 +48,7 @@ def sample_from_model_and_plot(model, noise_scheduler, timesteps, image_size, de
         t = torch.full((1,), i, device=device, dtype=torch.long)
         image = sample_timestep(noise_scheduler, image, t, model)
         if i % stepsize == 0:
-            display_tensor = torch.cat((display_tensor, image), dim=0, device=device)
+            display_tensor = torch.cat((display_tensor, image), dim=0)
 
     display_images_from_tensor(display_tensor.detach().cpu(), title=title, display=display, save_path=save_path, n_columns=n_columns)
 
