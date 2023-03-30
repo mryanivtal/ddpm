@@ -23,8 +23,8 @@ def sample_timestep(noise_scheduler, x, t, model):
     """
     betas_t = noise_scheduler.get_betas_t(t, x.shape)
     sqrt_one_minus_alphas_cumprod_t = noise_scheduler.get_sqrt_one_minus_alphas_cumprod_t(t, x.shape)
-    sqrt_recip_alphas_t = noise_scheduler.getsqrt_recip_alphas_t(t, x.shape)
-    posterior_variance_t = noise_scheduler.getposterior_variance_t(t, x.shape)
+    sqrt_recip_alphas_t = noise_scheduler.get_sqrt_recip_alphas_t(t, x.shape)
+    posterior_variance_t = noise_scheduler.get_posterior_variance_t(t, x.shape)
     # use model - get current image - noise prediction
     model_mean = sqrt_recip_alphas_t * (x - (betas_t / sqrt_one_minus_alphas_cumprod_t) * model(x, t))
 
@@ -36,18 +36,18 @@ def sample_timestep(noise_scheduler, x, t, model):
 
 
 @torch.no_grad()
-def sample_from_model_and_plot(noise_scheduler, T, image_size, device):
-    image = torch.full((1, 3, image_size), device=device)
+def sample_from_model_and_plot(model, noise_scheduler, T, image_size, device):
+    num_images = 2
+    image = torch.randn((num_images, *image_size), device=device)
     plt.figure(figsize=(15, 15))
     plt.axis('off')
-    num_images = 10
     stepsize = int(T / num_images)
 
     for i in range(0, T)[::-1]:
-        t = torch.full((1,), i, evice=device, dtype=torch.long)
-        image = noise_scheduler.sample_timestep(image, t)
+        t = torch.full((1,), i, device=device, dtype=torch.long)
+        image = sample_timestep(noise_scheduler, image, t, model)
         if i % stepsize == 0:
-            plt.subplot(1, num_images, i / stepsize + 1)
+            plt.subplot(1, num_images, int(i / stepsize + 1))
             display_images_from_tensor(image.detach().cpu())
 
 
@@ -64,7 +64,7 @@ def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer
     batch_loss.backward()
     optimizer.step()
 
-    return batch_loss.item
+    return batch_loss.item()
 #
 #
 # def sample_from_generator_and_plot(n_samples, gen_model, device, title=None, path_to_save=None, noise=None):

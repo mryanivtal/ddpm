@@ -43,8 +43,8 @@ BETA = args.beta
 RANDOM_SEED = args.randomseed
 DL_WORKERS = args.dlworkers
 
-IMAGE_SIZE = [64, 64]
 IMAGE_NUM_CHANNELS = 3
+IMAGE_SIZE = [IMAGE_NUM_CHANNELS, 64, 64]
 LATENT_DIM = 100
 
 
@@ -84,11 +84,14 @@ for epoch in tqdm(range(NUM_EPOCHS)):
         batch_loss = train_batch(data, TIMESTEPS, model, noise_scheduler, optimizer, device)
         batch_losses.append(batch_loss)
 
+        # todo: remove!
+        break
+
     epoch_loss = {'epoch': epoch, 'loss': np.average(batch_losses)}
     epoch_losses = epoch_losses.append(epoch_loss, ignore_index=True)
     print(f'Epoch: {epoch}, loss: {epoch_loss}')
     epoch_losses.to_csv(output_path / Path('train_loss.csv'))
-    sample_from_model_and_plot(noise_scheduler, TIMESTEPS, IMAGE_SIZE, device)
+    sample_from_model_and_plot(model, noise_scheduler, TIMESTEPS, IMAGE_SIZE, device)
 
 
 
