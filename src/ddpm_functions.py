@@ -1,8 +1,11 @@
+from pathlib import Path
+
 import torch
 from matplotlib import pyplot as plt
 import torch.nn.functional as F
 from common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
 from model_parts.simple_unet import SimpleUnet
+from src.dataloader_utils import get_reverse_image_transforms
 
 
 def get_loss(noise_scheduler, model, x_0, t, device):
@@ -51,7 +54,7 @@ def sample_from_model_and_plot(model, noise_scheduler, timesteps, image_size, de
         if i % stepsize == 0:
             display_tensor = torch.cat((display_tensor, image), dim=0)
 
-    display_images_from_tensor(display_tensor.detach().cpu(), title=title, display=display, save_path=save_path, n_columns=n_columns)
+    display_images_from_tensor(display_tensor.detach().cpu(), image_transforms=get_reverse_image_transforms(), title=title, display=display, save_path=save_path, n_columns=n_columns)
 
 
 def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer, device) -> float:
@@ -72,6 +75,7 @@ def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer
 def create_or_load_model(model_state_dict_path):
     model = SimpleUnet(3, out_dim=1, time_emb_dim=32)
     if model_state_dict_path is not None:
+        model_state_dict_path = Path(model_state_dict_path)
         if not model_state_dict_path.exists():
             raise FileNotFoundError(f'mode file {model_state_dict_path} was not found!')
 

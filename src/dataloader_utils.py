@@ -15,6 +15,14 @@ def seed_init_fn(seed=1):
     torch.manual_seed(seed)
 
 
+def get_reverse_image_transforms():
+    reverse_image_transforms = transforms.Compose([
+        transforms.Lambda(lambda t: (t +1) / 2),
+        transforms.Lambda(lambda t: t * 256),
+    ])
+    return reverse_image_transforms
+
+
 def create_image_dataloader(dataset_dir: str, batch_size=50, worker_init_fn=seed_init_fn, num_workers=0, in_mem_dataset=False) -> DataLoader:
     if not Path(dataset_dir).exists():
         raise FileNotFoundError(f'Input data folder does not exist: {Path(dataset_dir).absolute()}')

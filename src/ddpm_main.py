@@ -30,7 +30,7 @@ argparser.add_argument('--batchsize', type=int, default=50, help='train batch si
 argparser.add_argument('--beta', type=float, default=0.5, help='adam beta')
 argparser.add_argument('--randomseed', type=int, default=123, help='initial random seed')
 argparser.add_argument('--dlworkers', type=int, default=0, help='number of dataloader workers')
-argparser.add_argument('--onebatchperepoch', type=int, default=0, help='For debug purposes')
+argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')  #TODO: change debug
 argparser.add_argument('--startfrommodel', type=str, default=None, help='start from saved model')
 
 
@@ -72,7 +72,7 @@ print(f'DL_WORKERS = {DL_WORKERS}')
 cats_dl = create_image_dataloader(DATASET_DIR, batch_size=BATCH_SIZE, num_workers=DL_WORKERS)
 
 # == Model ==
-model = create_or_load_model(model_state_dict_path=Path(START_FROM_MODEL))
+model = create_or_load_model(model_state_dict_path=START_FROM_MODEL)
 noise_scheduler = NoiseScheduler(TIMESTEPS)
 model.to(device)
 
@@ -95,7 +95,6 @@ for epoch in tqdm(range(NUM_EPOCHS)):
     epoch_loss = {'epoch': epoch, 'loss': np.average(batch_losses)}
     epoch_losses = epoch_losses.append(epoch_loss, ignore_index=True)
     print(f'Epoch: {epoch}, loss: {epoch_loss}')
-
 
     model_filename = output_path / Path(f'model_epoch_{epoch}.pt')
     torch.save(model.state_dict(), model_filename)
