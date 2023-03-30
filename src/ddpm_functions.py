@@ -1,7 +1,7 @@
 import torch
 from matplotlib import pyplot as plt
 import torch.nn.functional as F
-from src.common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
+from common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
 
 
 def get_loss(noise_scheduler, model, x_0, t, device):
