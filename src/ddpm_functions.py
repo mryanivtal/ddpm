@@ -42,7 +42,7 @@ def sample_from_model_and_plot(model, noise_scheduler, timesteps, image_size, de
     plt.figure(figsize=(15, 15))
     plt.axis('off')
     stepsize = int(timesteps / num_images)
-    display_tensor = torch.Tensor((0, *image_size), device=device)
+    display_tensor = torch.Tensor((0, *image_size)).to(device)
 
     for i in range(0, timesteps)[::-1]:
         t = torch.full((1,), i, device=device, dtype=torch.long)
