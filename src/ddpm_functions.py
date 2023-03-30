@@ -2,7 +2,7 @@ import torch
 from matplotlib import pyplot as plt
 import torch.nn.functional as F
 from common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
-from src.model_parts.simple_unet import SimpleUnet
+from model_parts.simple_unet import SimpleUnet
 
 
 def get_loss(noise_scheduler, model, x_0, t, device):
@@ -38,7 +38,7 @@ def sample_timestep(noise_scheduler, x, t, model):
 
 @torch.no_grad()
 def sample_from_model_and_plot(model, noise_scheduler, timesteps, image_size, device, title=None, display=True, save_path=None, n_columns=8):
-    num_images = timesteps
+    num_images = 5
     image = torch.randn((1, *image_size), device=device)
     plt.figure(figsize=(15, 15))
     plt.axis('off')
