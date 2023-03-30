@@ -8,7 +8,7 @@ import pandas as pd
 import torch
 from torch import nn
 from tqdm import tqdm
-from src.dataloader_utils import seed_init_fn, create_image_dataloader
+from .dataloader_utils import seed_init_fn, create_image_dataloader
 import warnings
 
 from .ddpm_functions import get_loss, train_batch, sample_from_model_and_plot
