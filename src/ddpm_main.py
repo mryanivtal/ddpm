@@ -30,7 +30,7 @@ argparser.add_argument('--batchsize', type=int, default=50, help='train batch si
 argparser.add_argument('--beta', type=float, default=0.5, help='adam beta')
 argparser.add_argument('--randomseed', type=int, default=123, help='initial random seed')
 argparser.add_argument('--dlworkers', type=int, default=0, help='number of dataloader workers')
-argparser.add_argument('--onebatchperepoch', type=int, default=0, help='For debug purposes')
+argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')        # TODO chnage
 
 args = argparser.parse_args()
 ONE_BATCH_PER_EPOCH = args.onebatchperepoch

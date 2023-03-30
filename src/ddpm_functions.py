@@ -61,7 +61,7 @@ def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer
     batch_len = len(data)
     t = torch.randint(0, timesteps, (batch_len,), device=device).long()
 
-    batch_loss = get_loss(noise_scheduler, model, data, t, device)  #todo: was data[0]
+    batch_loss = get_loss(noise_scheduler, model, data, t, device)
     batch_loss.backward()
     optimizer.step()
 
