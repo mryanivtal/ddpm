@@ -27,13 +27,12 @@ argparser.add_argument('--lr', type=float, default=1e-3, help='learning rate')
 argparser.add_argument('--timesteps', type=int, default=100, help='model number of timesteps (T)')
 argparser.add_argument('--epochs', type=int, default=100, help='number of training epochs')
 argparser.add_argument('--batchsize', type=int, default=50, help='train batch size')
-argparser.add_argument('--beta', type=float, default=0.5, help='adam beta')
 argparser.add_argument('--randomseed', type=int, default=123, help='initial random seed')
 argparser.add_argument('--dlworkers', type=int, default=0, help='number of dataloader workers')
 argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')  #TODO: change debug
 argparser.add_argument('--startfrommodel', type=str, default=None, help='start from saved model')
-
-
+argparser.add_argument('--betastart', type=float, default=1e-4, help='diffusion model noise scheduler beta start')
+argparser.add_argument('--betaend', type=float, default=2e-2, help='diffusion model noise scheduler beta end')
 
 args = argparser.parse_args()
 ONE_BATCH_PER_EPOCH = args.onebatchperepoch
@@ -44,9 +43,10 @@ TIMESTEPS = args.timesteps
 LEARNING_RATE = args.lr
 NUM_EPOCHS = args.epochs
 BATCH_SIZE = args.batchsize
-BETA = args.beta
 RANDOM_SEED = args.randomseed
 DL_WORKERS = args.dlworkers
+BETA_START = args.betastart
+BETA_END = args.betaend
 
 IMAGE_NUM_CHANNELS = 3
 IMAGE_SIZE = [IMAGE_NUM_CHANNELS, 64, 64]
@@ -63,7 +63,6 @@ if RANDOM_SEED is not None:
     print(f'Random seed: {RANDOM_SEED}')
 
 print(f'GEN_LEARNING_RATE = {LEARNING_RATE}')
-print(f'GEN_BETA = {BETA}')
 print(f'NUM_EPOCHS = {NUM_EPOCHS}')
 print(f'BATCH_SIZE = {BATCH_SIZE}')
 print(f'DL_WORKERS = {DL_WORKERS}')
@@ -73,11 +72,11 @@ cats_dl = create_image_dataloader(DATASET_DIR, batch_size=BATCH_SIZE, num_worker
 
 # == Model ==
 model = create_or_load_model(model_state_dict_path=START_FROM_MODEL)
-noise_scheduler = NoiseScheduler(TIMESTEPS)
+noise_scheduler = NoiseScheduler(TIMESTEPS, beta_start=BETA_START, beta_end=BETA_END)
 model.to(device)
 
 # == Optimizer and loss ==
-optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, betas=(BETA, 0.999))
+optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
 # == Train loop ==
 epoch_losses = pd.DataFrame(columns=['epoch', 'loss'])
