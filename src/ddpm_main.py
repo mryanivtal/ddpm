@@ -72,7 +72,7 @@ print(f'DL_WORKERS = {DL_WORKERS}')
 cats_dl = create_image_dataloader(DATASET_DIR, batch_size=BATCH_SIZE, num_workers=DL_WORKERS)
 
 # == Model ==
-model = create_or_load_model(model_state_dict_path=START_FROM_MODEL)
+model = create_or_load_model(model_state_dict_path=Path(START_FROM_MODEL))
 noise_scheduler = NoiseScheduler(TIMESTEPS)
 model.to(device)
 
