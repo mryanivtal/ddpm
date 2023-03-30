@@ -30,10 +30,13 @@ argparser.add_argument('--batchsize', type=int, default=50, help='train batch si
 argparser.add_argument('--beta', type=float, default=0.5, help='adam beta')
 argparser.add_argument('--randomseed', type=int, default=123, help='initial random seed')
 argparser.add_argument('--dlworkers', type=int, default=0, help='number of dataloader workers')
+argparser.add_argument('--onebatchperepoch', type=int, default=0, help='For debug purposes')
+
 
 
 args = argparser.parse_args()
 
+ONE_BATCH_PER_EPOCH = args.onebatchperepoch
 OUTPUT_DIR = args.outdir
 DATASET_DIR = args.datadir
 TIMESTEPS = args.timesteps
@@ -85,8 +88,8 @@ for epoch in tqdm(range(NUM_EPOCHS)):
         batch_loss = train_batch(data, TIMESTEPS, model, noise_scheduler, optimizer, device)
         batch_losses.append(batch_loss)
 
-        # todo: remove!
-        break
+        if ONE_BATCH_PER_EPOCH:
+            break
 
     epoch_loss = {'epoch': epoch, 'loss': np.average(batch_losses)}
     epoch_losses = epoch_losses.append(epoch_loss, ignore_index=True)
