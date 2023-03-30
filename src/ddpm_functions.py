@@ -36,19 +36,21 @@ def sample_timestep(noise_scheduler, x, t, model):
 
 
 @torch.no_grad()
-def sample_from_model_and_plot(model, noise_scheduler, T, image_size, device):
-    num_images = 2
-    image = torch.randn((num_images, *image_size), device=device)
+def sample_from_model_and_plot(model, noise_scheduler, timesteps, image_size, device, title=None, display=True, save_path=None, n_columns=8):
+    num_images = timesteps
+    image = torch.randn((1, *image_size), device=device)
     plt.figure(figsize=(15, 15))
     plt.axis('off')
-    stepsize = int(T / num_images)
+    stepsize = int(timesteps / num_images)
+    display_tensor = torch.Tensor(0, *image_size)
 
-    for i in range(0, T)[::-1]:
+    for i in range(0, timesteps)[::-1]:
         t = torch.full((1,), i, device=device, dtype=torch.long)
         image = sample_timestep(noise_scheduler, image, t, model)
         if i % stepsize == 0:
-            plt.subplot(1, num_images, int(i / stepsize + 1))
-            display_images_from_tensor(image.detach().cpu())
+            display_tensor = torch.cat((display_tensor, image), dim=0)
+
+    display_images_from_tensor(display_tensor.detach().cpu(), title=title, display=display, save_path=save_path, n_columns=n_columns)
 
 
 #

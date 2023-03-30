@@ -8,20 +8,21 @@ import pandas as pd
 import torch
 from torch import nn
 from tqdm import tqdm
-from src.ddpm.dataloader_utils import seed_init_fn, create_image_dataloader
+from src.dataloader_utils import seed_init_fn, create_image_dataloader
 import warnings
 
-from src.ddpm.ddpm_functions import get_loss, train_batch, sample_from_model_and_plot
-from src.ddpm.noise_scheduler import NoiseScheduler
+from src.ddpm_functions import get_loss, train_batch, sample_from_model_and_plot
+from src.noise_scheduler import NoiseScheduler
 from src.model_parts.simple_unet import SimpleUnet
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument('--outdir', type=str, default='./output', help='output folder')
-argparser.add_argument('--datadir', type=str, default='../../../datasets/cats', help='dataset folder')
+argparser.add_argument('--datadir', type=str, default='../../datasets/cats', help='dataset folder')
 argparser.add_argument('--lr', type=float, default=1e-3, help='learning rate')
 argparser.add_argument('--timesteps', type=int, default=100, help='model number of timesteps (T)')
 argparser.add_argument('--epochs', type=int, default=100, help='number of training epochs')
@@ -90,8 +91,18 @@ for epoch in tqdm(range(NUM_EPOCHS)):
     epoch_loss = {'epoch': epoch, 'loss': np.average(batch_losses)}
     epoch_losses = epoch_losses.append(epoch_loss, ignore_index=True)
     print(f'Epoch: {epoch}, loss: {epoch_loss}')
-    epoch_losses.to_csv(output_path / Path('train_loss.csv'))
-    sample_from_model_and_plot(model, noise_scheduler, TIMESTEPS, IMAGE_SIZE, device)
+
+
+    model_filename = output_path / Path(f'model_epoch_{epoch}.pt')
+    torch.save(model.state_dict(), model_filename)
+
+    losses_filename = output_path / Path('train_loss.csv')
+    epoch_losses.to_csv(losses_filename)
+
+    sample_title = f'Epoch {epoch}, loss={epoch_loss}'
+    sample_filename = output_path / Path(f'epoch_{epoch}.jpg')
+    sample_from_model_and_plot(model, noise_scheduler, TIMESTEPS, IMAGE_SIZE, device, title=sample_title, save_path=sample_filename)
+
 
 
 
