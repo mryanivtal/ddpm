@@ -36,9 +36,15 @@ class Block(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x, t, ):
+        # First conv
         h = self.bnorm(self.relu(self.conv1(x)))
+        # Add time embedding
         time_emb = self.relu(self.time_mlp(t))
+        # extend last 2 dimensions
         time_emb = time_emb[(..., ) + (None, ) * 2]
+        # Add time channel to vector
         h = h + time_emb
+        # Second conv
         h = self.bnorm(self.relu(self.conv2(h)))
+        # Up / Down sample
         return self.transform(h)

@@ -1,5 +1,9 @@
 import torch
 import torch.nn.functional as F
+from matplotlib import pyplot as plt
+
+from src.common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
+
 
 class NoiseScheduler:
     def __init__(self, timesteps: int, beta_start=1e-4, beta_end=2e-2):
@@ -12,8 +16,6 @@ class NoiseScheduler:
         self.sqrt_alphas_cumprod = torch.sqrt(self.alphas_cumprod)
         self.sqrt_one_minus_alphas_cumprod = torch.sqrt(1. - self.alphas_cumprod)
         self.posterior_variance = self.betas * (1. - self.alphas_cumprod_prev) / (1. - self.alphas_cumprod)
-
-
 
     def _linear_beta_Schedule(self, timesteps: int, start=1e-4, end=2e-2) -> torch.Tensor:
         """
@@ -51,4 +53,27 @@ class NoiseScheduler:
         sqrt_alphas_cumprod_t = self._get_index_from_list(self.sqrt_alphas_cumprod, t, x_0.shape)
         sqrt_one_minus_alphas_cumprod_t = self._get_index_from_list(self.sqrt_one_minus_alphas_cumprod, t, x_0.shape)
 
-        return sqrt_alphas_cumprod_t.to(device) * x_0.to(device) + sqrt_one_minus_alphas_cumprod_t.to(device) * noise.to(device)
+        return sqrt_alphas_cumprod_t.to(device) * x_0.to(device) + sqrt_one_minus_alphas_cumprod_t.to(device) * noise.to(device), noise.to(device)
+
+
+    def get_betas_t(self, t, x_shape):
+        return self._get_index_from_list(self.betas, t, x_shape)
+
+    def get_sqrt_one_minus_alphas_cumprod_t(self, t, x_shape):
+        return self._get_index_from_list(self.sqrt_one_minus_alphas_cumprod, t, x_shape)
+
+    def get_sqrt_recip_alphas_t(self, t, x_shape):
+        return self._get_index_from_list(self.sqrt_recip_alphas, t, x_shape)
+
+    def get_posterior_variance_t(self, t, x_shape):
+        return self._get_index_from_list(self.posterior_variance, t, x_shape)
+
+
+
+
+
+
+
+
+
+
