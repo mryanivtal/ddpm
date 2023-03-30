@@ -32,10 +32,7 @@ argparser.add_argument('--randomseed', type=int, default=123, help='initial rand
 argparser.add_argument('--dlworkers', type=int, default=0, help='number of dataloader workers')
 argparser.add_argument('--onebatchperepoch', type=int, default=0, help='For debug purposes')
 
-
-
 args = argparser.parse_args()
-
 ONE_BATCH_PER_EPOCH = args.onebatchperepoch
 OUTPUT_DIR = args.outdir
 DATASET_DIR = args.datadir
