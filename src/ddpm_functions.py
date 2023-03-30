@@ -41,7 +41,7 @@ def sample_timestep(noise_scheduler, x, t, model):
 
 @torch.no_grad()
 def sample_from_model_and_plot(model, noise_scheduler, timesteps, image_size, device, title=None, display=True, save_path=None, n_columns=8):
-    num_images = 5
+    num_images = 8
     image = torch.randn((1, *image_size), device=device)
     plt.figure(figsize=(15, 15))
     plt.axis('off')
@@ -56,8 +56,6 @@ def sample_from_model_and_plot(model, noise_scheduler, timesteps, image_size, de
 
     # display_images_from_tensor(display_tensor.detach().cpu(), image_transforms=get_reverse_image_transforms(), title=title, display=display, save_path=save_path, n_columns=n_columns)
     display_images_from_tensor(display_tensor.detach().cpu(), title=title, display=display, save_path=save_path, n_columns=n_columns)
-
-
 
 def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer, device) -> float:
     # ==== (1) Update discriminator network: maximize log(D(x)) + log(1 - D(G(z)))

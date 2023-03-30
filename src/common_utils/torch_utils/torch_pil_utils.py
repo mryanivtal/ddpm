@@ -46,7 +46,7 @@ def display_images_from_tensor(tensor_img, image_transforms=None, title=None, di
         n_rows = int(np.ceil(n_images / n_columns))
 
         axes_pad = 0.1
-        image_fig_size = 0.6
+        image_fig_size = 1.2
         figsize = np.array([n_columns , n_rows]) * (image_fig_size + axes_pad)
         fig = plt.figure(figsize=figsize)
         grid = ImageGrid(fig, 111, nrows_ncols=(n_rows, n_columns),axes_pad=axes_pad)
