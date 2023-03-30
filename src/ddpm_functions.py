@@ -2,6 +2,7 @@ import torch
 from matplotlib import pyplot as plt
 import torch.nn.functional as F
 from common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
+from src.model_parts.simple_unet import SimpleUnet
 
 
 def get_loss(noise_scheduler, model, x_0, t, device):
@@ -66,6 +67,19 @@ def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer
     optimizer.step()
 
     return batch_loss.item()
+
+
+def create_or_load_model(model_state_dict_path):
+    model = SimpleUnet(3, out_dim=1, time_emb_dim=32)
+    if model_state_dict_path is not None:
+        if not model_state_dict_path.exists():
+            raise FileNotFoundError(f'mode file {model_state_dict_path} was not found!')
+
+        model.load_state_dict(torch.load(model_state_dict_path))
+        model.eval()
+    return model
+
+
 #
 #
 # def sample_from_generator_and_plot(n_samples, gen_model, device, title=None, path_to_save=None, noise=None):

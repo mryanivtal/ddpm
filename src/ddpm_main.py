@@ -11,7 +11,7 @@ from tqdm import tqdm
 from dataloader_utils import seed_init_fn, create_image_dataloader
 import warnings
 
-from ddpm_functions import get_loss, train_batch, sample_from_model_and_plot
+from ddpm_functions import train_batch, sample_from_model_and_plot, create_or_load_model
 from noise_scheduler import NoiseScheduler
 from model_parts.simple_unet import SimpleUnet
 
@@ -30,10 +30,14 @@ argparser.add_argument('--batchsize', type=int, default=50, help='train batch si
 argparser.add_argument('--beta', type=float, default=0.5, help='adam beta')
 argparser.add_argument('--randomseed', type=int, default=123, help='initial random seed')
 argparser.add_argument('--dlworkers', type=int, default=0, help='number of dataloader workers')
-argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')        # TODO chnage
+argparser.add_argument('--onebatchperepoch', type=int, default=0, help='For debug purposes')
+argparser.add_argument('--startfrommodel', type=str, default=None, help='start from saved model')
+
+
 
 args = argparser.parse_args()
 ONE_BATCH_PER_EPOCH = args.onebatchperepoch
+START_FROM_MODEL = args.startfrommodel
 OUTPUT_DIR = args.outdir
 DATASET_DIR = args.datadir
 TIMESTEPS = args.timesteps
@@ -68,7 +72,7 @@ print(f'DL_WORKERS = {DL_WORKERS}')
 cats_dl = create_image_dataloader(DATASET_DIR, batch_size=BATCH_SIZE, num_workers=DL_WORKERS)
 
 # == Model ==
-model = SimpleUnet(3, out_dim=1, time_emb_dim=32)
+model = create_or_load_model(model_state_dict_path=START_FROM_MODEL)
 noise_scheduler = NoiseScheduler(TIMESTEPS)
 model.to(device)
 
