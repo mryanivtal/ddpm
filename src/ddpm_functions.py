@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 import torch.nn.functional as F
 from common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
 from model_parts.simple_unet import SimpleUnet
-from src.dataloader_utils import get_reverse_image_transforms
+from dataloader_utils import get_reverse_image_transforms
 
 
 def get_loss(noise_scheduler, model, x_0, t, device):
