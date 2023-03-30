@@ -9,11 +9,12 @@ import torch
 from torch import nn
 from tqdm import tqdm
 
-from src.common_utils.torch_utils.dataloader_utils import seed_init_fn, create_image_dataloader
+from src.ddpm.dataloader_utils import seed_init_fn, create_image_dataloader
 from ddpm_functions import train_batch, sample_from_generator_and_plot, weights_init
-from model_parts.dcgan_discriminator import DcganDiscriminator
-from model_parts.dcgan_generator import DcganGenerator
 import warnings
+
+from src.model_parts.dcgan_discriminator import DcganDiscriminator
+from src.model_parts.dcgan_generator import DcganGenerator
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -23,10 +24,8 @@ argparser = argparse.ArgumentParser()
 argparser.add_argument('--outdir', type=str, default='./output', help='output folder')
 argparser.add_argument('--datadir', type=str, default='../../datasets/cats', help='dataset folder')
 argparser.add_argument('--lrgen', type=float, default=2e-4, help='generator learning rate')
-argparser.add_argument('--lrdis', type=float, default=2e-4, help='discriminator learning rate')
 argparser.add_argument('--epochs', type=int, default=100, help='number of training epochs')
 argparser.add_argument('--batchsize', type=int, default=50, help='train batch size')
-argparser.add_argument('--betadis', type=float, default=0.5, help='discriminator adam beta')
 argparser.add_argument('--betagen', type=float, default=0.5, help='generator adam beta')
 argparser.add_argument('--randomseed', type=int, default=123, help='initial random seed')
 argparser.add_argument('--dlworkers', type=int, default=0, help='number of dataloader workers')

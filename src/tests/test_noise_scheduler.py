@@ -3,9 +3,9 @@ import unittest
 import torch
 from torchvision.transforms import transforms
 
-from src.common_utils.torch_utils.dataloader_utils import create_image_dataloader
 from src.common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
-from src.noise_scheduler import NoiseScheduler
+from src.ddpm.dataloader_utils import create_image_dataloader
+from src.ddpm.noise_scheduler import NoiseScheduler
 
 
 class MyTestCase(unittest.TestCase):

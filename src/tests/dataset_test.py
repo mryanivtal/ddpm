@@ -1,13 +1,12 @@
 import unittest
 import torch
 from matplotlib import pyplot as plt
-from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 
-from src.common_utils.torch_utils.dataloader_utils import create_image_dataloader
+from src.common_utils.torch_utils.images_dataset import ImagesDataset
 from src.common_utils.torch_utils.images_in_mem_dataset import ImagesInMemDataset
 from src.common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
-from src.common_utils.torch_utils.images_dataset import ImagesDataset
+from src.ddpm.dataloader_utils import create_image_dataloader
 
 
 class MyTestCase(unittest.TestCase):
