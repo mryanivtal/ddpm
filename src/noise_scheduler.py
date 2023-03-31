@@ -3,16 +3,16 @@ import torch.nn.functional as F
 
 
 class NoiseScheduler:
-    def __init__(self, timesteps: int, beta_start=1e-4, beta_end=2e-2):
+    def __init__(self, timesteps=300, beta_start=1e-4, beta_end=2e-2):
         self.timesteps = timesteps
         self.betas = self._linear_beta_Schedule(timesteps, start=beta_start, end=beta_end)
         self.alphas = 1. - self.betas
         self.alphas_cumprod = torch.cumprod(self.alphas, axis=0)
         self.alphas_cumprod_prev = F.pad(self.alphas_cumprod[:-1], (1, 0), value=1.0)
-        self.sqrt_recip_alphas = torch.sqrt(self.alphas_cumprod)
+        self.sqrt_recip_alphas = torch.sqrt(1.0 / self.alphas)
         self.sqrt_alphas_cumprod = torch.sqrt(self.alphas_cumprod)
-        self.sqrt_one_minus_alphas_cumprod = torch.sqrt(1. - self.alphas_cumprod)
-        self.posterior_variance = self.betas * (1. - self.alphas_cumprod_prev) / (1. - self.alphas_cumprod)
+        self.sqrt_one_minus_alphas_cumprod = torch.sqrt(1.0 - self.alphas_cumprod)
+        self.posterior_variance = self.betas * (1.0 - self.alphas_cumprod_prev) / (1.0 - self.alphas_cumprod)
 
     def _linear_beta_Schedule(self, timesteps: int, start=1e-4, end=2e-2) -> torch.Tensor:
         """
@@ -35,7 +35,7 @@ class NoiseScheduler:
         """
         batch_size = t.shape[0]
         out = vals.gather(-1, t.type(torch.int64).cpu())
-        return out.reshape(batch_size, *((1,) *  (len(x_shape) - 1))).to(t.device)
+        return out.reshape(batch_size, *((1,) * (len(x_shape) - 1))).to(t.device)
 
     def forward_diffusion_sample(self, x_0, t, device='cpu'):
         """
