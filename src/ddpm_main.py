@@ -108,7 +108,7 @@ for epoch in tqdm(range(NUM_EPOCHS)):
     epoch += 1
     batch_losses = []
 
-    # model.train()         #todo:revert?
+    model.train()         #todo:revert?
     for i, data in enumerate(cats_dl):
         batch_loss = train_batch(data, TIMESTEPS, model, noise_scheduler, optimizer, device)
         batch_losses.append(batch_loss)
@@ -117,7 +117,7 @@ for epoch in tqdm(range(NUM_EPOCHS)):
             break
 
     # Sample from model, report losses, save checkpoint
-    # model.eval()      #todo:revert?
+    model.eval()      #todo:revert?
     epoch_loss = np.average(batch_losses)
     epoch_loss_dict = {'epoch': epoch, 'loss': epoch_loss}
     epoch_losses = epoch_losses.append(epoch_loss_dict, ignore_index=True)
