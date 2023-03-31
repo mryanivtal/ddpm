@@ -19,7 +19,9 @@ def get_reverse_image_transforms():
     reverse_image_transforms = transforms.Compose([
         transforms.Lambda(lambda t: (t + 1) / 2),
         transforms.Lambda(lambda t: t * 256),
-        transforms.Lambda(lambda t: t.type(torch.uint8))
+        transforms.Lambda(lambda t: t.permute(0, 2, 3, 1)),  # CHW to HWC
+        transforms.Lambda(lambda t: t.numpy().astype(np.uint8)),
+        # transforms.Lambda(lambda t: t.type(torch.uint8))
         ])
     return reverse_image_transforms
 
