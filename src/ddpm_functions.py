@@ -83,20 +83,20 @@ def save_checkpoint(model_name, epoch, model, optimizer, loss, checkpoint_path):
     torch.save(checkpoint, checkpoint_path)
 
 
-def load_checkpoint(checkpoint_path):
+def load_checkpoint(checkpoint_path, device):
     checkpoint_path = Path(checkpoint_path)
     if not checkpoint_path.exists():
         raise FileNotFoundError(f'mode file {checkpoint_path} was not found!')
 
-    checkpoint = torch.load(checkpoint_path)
+    checkpoint = torch.load(checkpoint_path, map_location=device)
     return checkpoint
 
 
 def update_model_and_optimizer_from_checkpoint(checkpoint_path, model, optimizer, device):
     print('Loading checkpoint: ', end='')
-    checkpoint_dict = load_checkpoint(checkpoint_path)
+    checkpoint_dict = load_checkpoint(checkpoint_path, device)
     print(f'model {checkpoint_dict["model_name"]}, epoch {checkpoint_dict["epoch"]}, last loss {checkpoint_dict["loss"]}')
-    model.load_state_dict(checkpoint_dict['model_state_dict'].to(device))
+    model.load_state_dict(checkpoint_dict['model_state_dict'])
     optimizer.load_state_dict(checkpoint_dict['optimizer_state_dict'])
     model.train()
 

@@ -82,6 +82,10 @@ noise_scheduler = NoiseScheduler(TIMESTEPS, beta_start=BETA_START, beta_end=BETA
 model = SimpleUnet(3, out_dim=1, time_emb_dim=32)
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
+# todo: remove below==
+START_FROM_MODEL = output_path / Path(f'model.pt') # todo: remove!
+# todo: remove above ==
+
 if START_FROM_MODEL is not None:
     update_model_and_optimizer_from_checkpoint(START_FROM_MODEL, model, optimizer, device=device)
 
