@@ -35,7 +35,7 @@ argparser.add_argument('--modelcheckpoint', type=str, default=None, help='start 
 argparser.add_argument('--optimcheckpoint', type=str, default=None, help='start from saved optimizer')
 argparser.add_argument('--betastart', type=float, default=1e-4, help='diffusion model noise scheduler beta start')
 argparser.add_argument('--betaend', type=float, default=2e-2, help='diffusion model noise scheduler beta end')
-argparser.add_argument('--checkpointevery', type=int, default=1, help='save checkpoint every N epochs, 0 for disable') #TODO: change to 5 debug
+argparser.add_argument('--checkpointevery', type=int, default=5, help='save checkpoint every N epochs, 0 for disable') #TODO: change to 5 debug
 argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')  #TODO: change to 0 debug
 argparser.add_argument('--inferonly', type=int, default=0, help='Only sample from model, no training')
 
@@ -43,7 +43,6 @@ args = argparser.parse_args()
 ONE_BATCH_PER_EPOCH = args.onebatchperepoch
 MODEL_CHECKPOINT = args.modelcheckpoint
 OPTIM_CHECKPOINT = args.optimcheckpoint
-
 OUTPUT_DIR = args.outdir
 DATASET_DIR = args.datadir
 TIMESTEPS = args.timesteps
@@ -75,8 +74,16 @@ print(f'NUM_EPOCHS = {NUM_EPOCHS}')
 print(f'BATCH_SIZE = {BATCH_SIZE}')
 print(f'DL_WORKERS = {DL_WORKERS}')
 
+
 # == Data ==
 cats_dl = create_image_dataloader(DATASET_DIR, batch_size=BATCH_SIZE, num_workers=DL_WORKERS)
+
+# todo: delete below ==
+print('Debug mode, limited dataset!!!')
+BATCH_SIZE = 25
+cats_dl.dataset.file_list = cats_dl.dataset.file_list[:50]
+cats_dl.dataset.length = len(cats_dl.dataset.file_list)
+# todo: delete above ==
 
 # == Model and optimizer ==
 noise_scheduler = NoiseScheduler(TIMESTEPS, beta_start=BETA_START, beta_end=BETA_END)
