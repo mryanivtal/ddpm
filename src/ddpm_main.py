@@ -34,7 +34,6 @@ argparser.add_argument('--startfrommodel', type=str, default=None, help='start f
 argparser.add_argument('--betastart', type=float, default=1e-4, help='diffusion model noise scheduler beta start')
 argparser.add_argument('--betaend', type=float, default=2e-2, help='diffusion model noise scheduler beta end')
 argparser.add_argument('--checkpointevery', type=int, default=5, help='save checkpoint every N epochs, 0 for disable')
-argparser.add_argument('--dlworkers', type=int, default=0, help='number of dataloader workers')
 argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')  #TODO: change to 0 debug
 argparser.add_argument('--inferonly', type=int, default=0, help='Only sample from model, no training')
 
@@ -97,7 +96,7 @@ sample_from_model_and_plot(model, noise_scheduler, TIMESTEPS, IMAGE_SIZE, device
 
 if INFER_ONLY == 1:
     exit(0)
-    
+
 # == Train loop ==
 epoch_losses = pd.DataFrame(columns=['epoch', 'loss'])
 for epoch in tqdm(range(NUM_EPOCHS)):
