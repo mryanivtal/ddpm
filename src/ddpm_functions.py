@@ -53,7 +53,9 @@ def sample_from_model_and_plot(model, noise_scheduler, timesteps, image_size, de
         if i % stepsize == 0:
             display_tensor = torch.cat((display_tensor, image), dim=0)
 
-    display_images_from_tensor(display_tensor.detach().cpu(), image_transforms=get_reverse_image_transforms(), title=title, display=display, save_path=save_path, n_columns=n_columns)
+    # display_images_from_tensor(display_tensor.detach().cpu(), image_transforms=get_reverse_image_transforms(), title=title, display=display, save_path=save_path, n_columns=n_columns)
+    display_images_from_tensor(display_tensor.detach().cpu(), title=title, display=display, save_path=save_path, n_columns=n_columns)
+
 
 
 def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer, device) -> float:
@@ -63,7 +65,6 @@ def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer
     data = data.to(device)
     batch_len = len(data)
     t = torch.randint(0, timesteps, (batch_len,), device=device).long()
-
     batch_loss = get_loss(noise_scheduler, model, data, t, device)
     batch_loss.backward()
     optimizer.step()
