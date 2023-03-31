@@ -4,7 +4,6 @@ import torch
 from matplotlib import pyplot as plt
 import torch.nn.functional as F
 from common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
-from model_parts.simple_unet import SimpleUnet
 from dataloader_utils import get_reverse_image_transforms
 
 
