@@ -92,11 +92,11 @@ def load_checkpoint(checkpoint_path):
     return checkpoint
 
 
-def update_model_and_optimizer_from_checkpoint(checkpoint_path, model, optimizer):
+def update_model_and_optimizer_from_checkpoint(checkpoint_path, model, optimizer, device):
     print('Loading checkpoint: ', end='')
     checkpoint_dict = load_checkpoint(checkpoint_path)
     print(f'model {checkpoint_dict["model_name"]}, epoch {checkpoint_dict["epoch"]}, last loss {checkpoint_dict["loss"]}')
-    model.load_state_dict(checkpoint_dict['model_state_dict'])
+    model.load_state_dict(checkpoint_dict['model_state_dict'], map_location=device)
     optimizer.load_state_dict(checkpoint_dict['optimizer_state_dict'])
     model.train()
 
