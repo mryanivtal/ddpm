@@ -1,6 +1,6 @@
 # 1511.06434 UNSUPERVISED REPRESENTATION LEARNING WITH DEEP CONVOLUTIONAL GENERATIVE ADVERSARIAL NETWORKS
 # https://arxiv.org/abs/1511.06434
-
+import time
 from pathlib import Path
 import argparse
 import numpy as np
@@ -95,6 +95,7 @@ sample_from_model_and_plot(model, noise_scheduler, TIMESTEPS, IMAGE_SIZE, device
                            save_path=sample_filename)
 
 if INFER_ONLY == 1:
+    time.sleep(10)
     exit(0)
 
 # == Train loop ==
