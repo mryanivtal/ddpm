@@ -33,7 +33,6 @@ class SimpleUnet(nn.Module):
         t = self.time_mlp(timestep)
         # initial conv
         x = self.conv0(x)
-
         # Unet
         residual_inputs = []
         for down in self.downs:

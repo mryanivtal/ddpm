@@ -31,13 +31,13 @@ class Block(nn.Module):
             self.conv1 = nn.Conv2d(in_channels, out_channels, 3, padding=1)
             self.transform = nn.Conv2d(out_channels, out_channels, kernel_size=4, stride=2, padding=1)
         self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
-        self.pool = nn.MaxPool2d(3, stride=2)
-        self.bnorm = nn.BatchNorm2d(out_channels)
+        self.bnorm1 = nn.BatchNorm2d(out_channels)
+        self.bnorm2 = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU()
 
     def forward(self, x, t, ):
         # First conv
-        h = self.bnorm(self.relu(self.conv1(x)))
+        h = self.bnorm1(self.relu(self.conv1(x)))
         # Add time embedding
         time_emb = self.relu(self.time_mlp(t))
         # extend last 2 dimensions
@@ -45,6 +45,6 @@ class Block(nn.Module):
         # Add time channel to vector
         h = h + time_emb
         # Second conv
-        h = self.bnorm(self.relu(self.conv2(h)))
+        h = self.bnorm2(self.relu(self.conv2(h)))
         # Up / Down sample
         return self.transform(h)

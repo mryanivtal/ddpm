@@ -35,7 +35,7 @@ argparser.add_argument('--modelcheckpoint', type=str, default=None, help='start 
 argparser.add_argument('--optimcheckpoint', type=str, default=None, help='start from saved optimizer')
 argparser.add_argument('--betastart', type=float, default=1e-4, help='diffusion model noise scheduler beta start')
 argparser.add_argument('--betaend', type=float, default=2e-2, help='diffusion model noise scheduler beta end')
-argparser.add_argument('--checkpointevery', type=int, default=5, help='save checkpoint every N epochs, 0 for disable') #TODO: change to 5 debug
+argparser.add_argument('--checkpointevery', type=int, default=10, help='save checkpoint every N epochs, 0 for disable') #TODO: change to 10 debug
 argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')  #TODO: change to 0 debug
 argparser.add_argument('--inferonly', type=int, default=0, help='Only sample from model, no training')
 
@@ -116,7 +116,7 @@ for epoch in tqdm(range(NUM_EPOCHS)):
     epoch += 1
     batch_losses = []
 
-    model.train()
+    # model.train()         #todo:revert?
     for i, data in enumerate(cats_dl):
         batch_loss = train_batch(data, TIMESTEPS, model, noise_scheduler, optimizer, device)
         batch_losses.append(batch_loss)
@@ -125,7 +125,7 @@ for epoch in tqdm(range(NUM_EPOCHS)):
             break
 
     # Sample from model, report losses, save checkpoint
-    model.eval()
+    # model.eval()      #todo:revert?
     epoch_loss = np.average(batch_losses)
     epoch_loss_dict = {'epoch': epoch, 'loss': epoch_loss}
     epoch_losses = epoch_losses.append(epoch_loss_dict, ignore_index=True)

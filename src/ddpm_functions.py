@@ -29,7 +29,7 @@ def sample_timestep(noise_scheduler, x, t, model):
     sqrt_recip_alphas_t = noise_scheduler.get_sqrt_recip_alphas_t(t, x.shape)
     posterior_variance_t = noise_scheduler.get_posterior_variance_t(t, x.shape)
     # use model - get current image - noise prediction
-    model_mean = sqrt_recip_alphas_t * (x - (betas_t / sqrt_one_minus_alphas_cumprod_t) * model(x, t))
+    model_mean = sqrt_recip_alphas_t * (x - betas_t * model(x, t) / sqrt_one_minus_alphas_cumprod_t)
 
     if t == 0:
         return model_mean
@@ -55,7 +55,6 @@ def sample_from_model_and_plot(model, noise_scheduler, timesteps, image_size, de
 
     display_images_from_tensor(display_tensor.detach().cpu(), image_transforms=get_reverse_image_transforms(), title=title, display=display, save_path=save_path, n_columns=n_columns)
     # display_images_from_tensor(display_tensor.detach().cpu(), title=title, display=display, save_path=save_path, n_columns=n_columns)
-
 
 
 def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer, device) -> float:
