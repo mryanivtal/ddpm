@@ -74,16 +74,8 @@ print(f'NUM_EPOCHS = {NUM_EPOCHS}')
 print(f'BATCH_SIZE = {BATCH_SIZE}')
 print(f'DL_WORKERS = {DL_WORKERS}')
 
-
 # == Data ==
 cats_dl = create_image_dataloader(DATASET_DIR, batch_size=BATCH_SIZE, num_workers=DL_WORKERS)
-
-# # todo: delete below ==
-# print('Debug mode, limited dataset!!!')
-# BATCH_SIZE = 25
-# cats_dl.dataset.file_list = cats_dl.dataset.file_list[:50]
-# cats_dl.dataset.length = len(cats_dl.dataset.file_list)
-# # todo: delete above ==
 
 # == Model and optimizer ==
 noise_scheduler = NoiseScheduler(TIMESTEPS, beta_start=BETA_START, beta_end=BETA_END)
@@ -144,36 +136,3 @@ for epoch in tqdm(range(NUM_EPOCHS)):
             optim_path = output_path / Path(f'optim_epoch_{epoch}.pt')
             save_model_checkpoint(model, model_path)
             save_optim_checkpoint(optimizer, optim_path)
-
-
-
-# sample_from_generator_and_plot(64, model, device, title=f'Epoch 0', path_to_save=output_path / Path(f'epoch_0'),
-#                                noise=fixed_noise)
-#
-# for epoch in tqdm(range(NUM_EPOCHS)):
-#     epoch += 1
-#     batch_losses_gen = []
-#     batch_losses_dis = []
-#
-#     for i, data in enumerate(cats_dl):
-#         batch_loss = train_batch(data, model, gen_optimizer, dis_model, dis_optimizer, criterion, device, real_label=REAL_LABEL, fake_label=FAKE_LABEL)
-#         batch_losses_gen.append(batch_loss['loss_gen'])
-#         batch_losses_dis.append(batch_loss['loss_dis'])
-#
-#     epoch_loss = {'epoch': epoch, 'gen_loss': np.average(batch_losses_gen), 'dis_loss': np.average(batch_losses_dis)}
-#     epoch_losses = epoch_losses.append(epoch_loss, ignore_index=True)
-#     print(f'Epoch: {epoch}, dis_loss: {epoch_loss["dis_loss"]}, gen_loss: {epoch_loss["gen_loss"]}')
-#     epoch_losses.to_csv(output_path / Path('train_loss.csv'))
-#     sample_from_generator_and_plot(64, model, device, title=f'Epoch {epoch}', path_to_save=output_path / Path(f'epoch_{epoch}'), noise=fixed_noise)
-#
-#
-
-
-
-
-
-
-
-
-
-
