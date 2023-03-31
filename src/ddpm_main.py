@@ -26,7 +26,7 @@ argparser = argparse.ArgumentParser()
 argparser.add_argument('--outdir', type=str, default='./output', help='output folder')
 argparser.add_argument('--datadir', type=str, default='../../datasets/cats', help='dataset folder')
 argparser.add_argument('--lr', type=float, default=1e-3, help='learning rate')
-argparser.add_argument('--timesteps', type=int, default=100, help='model number of timesteps (T)')
+argparser.add_argument('--timesteps', type=int, default=200, help='model number of timesteps (T)')
 argparser.add_argument('--epochs', type=int, default=100, help='number of training epochs')
 argparser.add_argument('--batchsize', type=int, default=50, help='train batch size')
 argparser.add_argument('--randomseed', type=int, default=123, help='initial random seed')
@@ -38,8 +38,6 @@ argparser.add_argument('--betaend', type=float, default=2e-2, help='diffusion mo
 argparser.add_argument('--checkpointevery', type=int, default=1, help='save checkpoint every N epochs, 0 for disable') #TODO: change to 5 debug
 argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')  #TODO: change to 0 debug
 argparser.add_argument('--inferonly', type=int, default=0, help='Only sample from model, no training')
-
-
 
 args = argparser.parse_args()
 ONE_BATCH_PER_EPOCH = args.onebatchperepoch
