@@ -59,7 +59,7 @@ def sample_from_model_and_plot(model, noise_scheduler, timesteps, image_size, de
 def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer, device) -> float:
     # ==== (1) Update discriminator network: maximize log(D(x)) + log(1 - D(G(z)))
     # a. Train discriminator with real data
-    model.zero_grad()
+    optimizer.zero_grad()
     data = data.to(device)
     batch_len = len(data)
     t = torch.randint(0, timesteps, (batch_len,), device=device).long()

@@ -23,7 +23,7 @@ class MyTestCase(unittest.TestCase):
 
         noise_scheduler = NoiseScheduler(T_STEPS, beta_start=1e-4, beta_end=5e-2)
         noise_steps = torch.arange(T_STEPS)
-        noisy_images = noise_scheduler.forward_diffusion_sample(images, noise_steps)
+        noisy_images, noise = noise_scheduler.forward_diffusion_sample(images, noise_steps)
 
         inverse_transforms = transforms.Compose([
             transforms.Lambda(lambda t: (t + 1) / 2),

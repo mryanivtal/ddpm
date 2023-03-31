@@ -26,7 +26,7 @@ argparser = argparse.ArgumentParser()
 argparser.add_argument('--outdir', type=str, default='./output', help='output folder')
 argparser.add_argument('--datadir', type=str, default='../../datasets/cats', help='dataset folder')
 argparser.add_argument('--lr', type=float, default=1e-3, help='learning rate')
-argparser.add_argument('--timesteps', type=int, default=200, help='model number of timesteps (T)')
+argparser.add_argument('--timesteps', type=int, default=300, help='model number of timesteps (T)')
 argparser.add_argument('--epochs', type=int, default=100, help='number of training epochs')
 argparser.add_argument('--batchsize', type=int, default=50, help='train batch size')
 argparser.add_argument('--randomseed', type=int, default=123, help='initial random seed')
@@ -78,12 +78,12 @@ print(f'DL_WORKERS = {DL_WORKERS}')
 # == Data ==
 cats_dl = create_image_dataloader(DATASET_DIR, batch_size=BATCH_SIZE, num_workers=DL_WORKERS)
 
-# todo: delete below ==
-print('Debug mode, limited dataset!!!')
-BATCH_SIZE = 25
-cats_dl.dataset.file_list = cats_dl.dataset.file_list[:50]
-cats_dl.dataset.length = len(cats_dl.dataset.file_list)
-# todo: delete above ==
+# # todo: delete below ==
+# print('Debug mode, limited dataset!!!')
+# BATCH_SIZE = 25
+# cats_dl.dataset.file_list = cats_dl.dataset.file_list[:50]
+# cats_dl.dataset.length = len(cats_dl.dataset.file_list)
+# # todo: delete above ==
 
 # == Model and optimizer ==
 noise_scheduler = NoiseScheduler(TIMESTEPS, beta_start=BETA_START, beta_end=BETA_END)

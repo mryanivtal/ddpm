@@ -5,8 +5,8 @@ from torch.utils.data import DataLoader
 import numpy as np
 import torchvision.transforms as transforms
 
-from common_utils.torch_utils.images_dataset import ImagesDataset
-from common_utils.torch_utils.images_in_mem_dataset import ImagesInMemDataset
+from src.common_utils.torch_utils.images_dataset import ImagesDataset
+from src.common_utils.torch_utils.images_in_mem_dataset import ImagesInMemDataset
 
 
 def seed_init_fn(seed=1):
