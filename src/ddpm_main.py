@@ -95,7 +95,7 @@ sample_from_model_and_plot(model, noise_scheduler, TIMESTEPS, IMAGE_SIZE, device
                            save_path=sample_filename)
 
 if INFER_ONLY == 1:
-    time.sleep(10)
+    time.sleep(20)
     exit(0)
 
 # == Train loop ==
