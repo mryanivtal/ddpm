@@ -19,7 +19,7 @@ def get_reverse_image_transforms():
     reverse_image_transforms = transforms.Compose([
         transforms.Lambda(lambda t: (t + 1) / 2),
         transforms.Lambda(lambda t: t * 256),
-        transforms.Lambda(lambda t: t.type(torch.uint8))
+        # transforms.Lambda(lambda t: t.type(torch.uint8))          # todo: add back?
         ])
     return reverse_image_transforms
 

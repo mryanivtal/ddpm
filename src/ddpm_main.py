@@ -30,11 +30,14 @@ argparser.add_argument('--epochs', type=int, default=100, help='number of traini
 argparser.add_argument('--batchsize', type=int, default=50, help='train batch size')
 argparser.add_argument('--randomseed', type=int, default=123, help='initial random seed')
 argparser.add_argument('--dlworkers', type=int, default=0, help='number of dataloader workers')
-argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')  #TODO: change to 0 debug
 argparser.add_argument('--startfrommodel', type=str, default=None, help='start from saved model')
 argparser.add_argument('--betastart', type=float, default=1e-4, help='diffusion model noise scheduler beta start')
 argparser.add_argument('--betaend', type=float, default=2e-2, help='diffusion model noise scheduler beta end')
 argparser.add_argument('--checkpointevery', type=int, default=5, help='save checkpoint every N epochs, 0 for disable')
+argparser.add_argument('--dlworkers', type=int, default=0, help='number of dataloader workers')
+argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')  #TODO: change to 0 debug
+argparser.add_argument('--inferonly', type=int, default=0, help='Only sample from model, no training')
+
 
 
 args = argparser.parse_args()
@@ -51,6 +54,7 @@ DL_WORKERS = args.dlworkers
 BETA_START = args.betastart
 BETA_END = args.betaend
 CHECKPOINT_EVERY = args.checkpointevery
+INFER_ONLY = args.inferonly
 
 IMAGE_NUM_CHANNELS = 3
 IMAGE_SIZE = [IMAGE_NUM_CHANNELS, 64, 64]
@@ -91,6 +95,9 @@ sample_filename = output_path / Path(f'epoch_0.jpg')
 sample_from_model_and_plot(model, noise_scheduler, TIMESTEPS, IMAGE_SIZE, device, title=sample_title,
                            save_path=sample_filename)
 
+if INFER_ONLY == 1:
+    exit(0)
+    
 # == Train loop ==
 epoch_losses = pd.DataFrame(columns=['epoch', 'loss'])
 for epoch in tqdm(range(NUM_EPOCHS)):
