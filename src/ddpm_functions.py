@@ -71,34 +71,28 @@ def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer
     return batch_loss.item()
 
 
-def save_checkpoint(model_name, epoch, model, optimizer, loss, checkpoint_path):
-    checkpoint = {
-        'model_name': model_name,
-        'epoch': epoch,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-        'loss': loss,
-    }
-
-    torch.save(checkpoint, checkpoint_path)
+def save_model_checkpoint(model, file_path):
+    torch.save(model.state_dict(), file_path)
 
 
-def load_checkpoint(checkpoint_path, device):
-    checkpoint_path = Path(checkpoint_path)
-    if not checkpoint_path.exists():
-        raise FileNotFoundError(f'mode file {checkpoint_path} was not found!')
-
-    checkpoint = torch.load(checkpoint_path, map_location=device)
-    return checkpoint
+def save_optim_checkpoint(optimizer, file_path):
+    torch.save(optimizer.state_dict(), file_path)
 
 
-def update_model_and_optimizer_from_checkpoint(checkpoint_path, model, optimizer, device):
-    print('Loading checkpoint: ', end='')
-    checkpoint_dict = load_checkpoint(checkpoint_path, device)
-    print(f'model {checkpoint_dict["model_name"]}, epoch {checkpoint_dict["epoch"]}, last loss {checkpoint_dict["loss"]}')
-    model.load_state_dict(checkpoint_dict['model_state_dict'])
-    optimizer.load_state_dict(checkpoint_dict['optimizer_state_dict'])
-    model.train()
+def update_model_from_checkpoint(model, model_path, device):
+    if not Path(model_path).exists():
+        raise FileNotFoundError(f'Model file {model_path} was not found!')
+
+    model_state_dict = torch.load(model_path, map_location=device)
+    model.load_state_dict(model_state_dict)
+
+
+def update_optim_from_checkpoint(optimizer, optim_path, device):
+    if not Path(optim_path).exists():
+        raise FileNotFoundError(f'OIptimizer file {optim_path} was not found!')
+
+    optim_state_dict = torch.load(optim_path, map_location=device)
+    optimizer.load_state_dict(optim_state_dict)
 
 
 
