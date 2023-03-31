@@ -11,7 +11,8 @@ from tqdm import tqdm
 from dataloader_utils import seed_init_fn, create_image_dataloader
 import warnings
 
-from ddpm_functions import train_batch, sample_from_model_and_plot, create_or_load_model
+from ddpm_functions import train_batch, sample_from_model_and_plot, \
+    update_model_and_optimizer_from_checkpoint, save_checkpoint
 from noise_scheduler import NoiseScheduler
 from model_parts.simple_unet import SimpleUnet
 
@@ -29,10 +30,12 @@ argparser.add_argument('--epochs', type=int, default=100, help='number of traini
 argparser.add_argument('--batchsize', type=int, default=50, help='train batch size')
 argparser.add_argument('--randomseed', type=int, default=123, help='initial random seed')
 argparser.add_argument('--dlworkers', type=int, default=0, help='number of dataloader workers')
-argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')  #TODO: change debug
+argparser.add_argument('--onebatchperepoch', type=int, default=1, help='For debug purposes')  #TODO: change to 0 debug
 argparser.add_argument('--startfrommodel', type=str, default=None, help='start from saved model')
 argparser.add_argument('--betastart', type=float, default=1e-4, help='diffusion model noise scheduler beta start')
 argparser.add_argument('--betaend', type=float, default=2e-2, help='diffusion model noise scheduler beta end')
+argparser.add_argument('--checkpointevery', type=int, default=5, help='save checkpoint every N epochs, 0 for disable')
+
 
 args = argparser.parse_args()
 ONE_BATCH_PER_EPOCH = args.onebatchperepoch
@@ -47,11 +50,11 @@ RANDOM_SEED = args.randomseed
 DL_WORKERS = args.dlworkers
 BETA_START = args.betastart
 BETA_END = args.betaend
+CHECKPOINT_EVERY = args.checkpointevery
 
 IMAGE_NUM_CHANNELS = 3
 IMAGE_SIZE = [IMAGE_NUM_CHANNELS, 64, 64]
 LATENT_DIM = 100
-
 
 # == prep folders ==
 output_path = Path(OUTPUT_DIR)
@@ -70,16 +73,19 @@ print(f'DL_WORKERS = {DL_WORKERS}')
 # == Data ==
 cats_dl = create_image_dataloader(DATASET_DIR, batch_size=BATCH_SIZE, num_workers=DL_WORKERS)
 
-# == Model ==
-model = create_or_load_model(model_state_dict_path=START_FROM_MODEL)
+# == Model and optimizer ==
 noise_scheduler = NoiseScheduler(TIMESTEPS, beta_start=BETA_START, beta_end=BETA_END)
-model.to(device)
 
-# == Optimizer and loss ==
+model = SimpleUnet(3, out_dim=1, time_emb_dim=32)
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
+if START_FROM_MODEL is not None:
+    update_model_and_optimizer_from_checkpoint(START_FROM_MODEL, model, optimizer)
+
+model.to(device)
+
 # == initial sample - before train ==
-model.train(False)
+model.eval()
 sample_title = f'Initial sample - Before train'
 sample_filename = output_path / Path(f'epoch_0.jpg')
 sample_from_model_and_plot(model, noise_scheduler, TIMESTEPS, IMAGE_SIZE, device, title=sample_title,
@@ -99,14 +105,12 @@ for epoch in tqdm(range(NUM_EPOCHS)):
         if ONE_BATCH_PER_EPOCH:
             break
 
-    # Sample from model and report losses
-    model.train(False)
-    epoch_loss = {'epoch': epoch, 'loss': np.average(batch_losses)}
-    epoch_losses = epoch_losses.append(epoch_loss, ignore_index=True)
+    # Sample from model, report losses, save checkpoint
+    model.eval()
+    epoch_loss = np.average(batch_losses)
+    epoch_loss_dict = {'epoch': epoch, 'loss': epoch_loss}
+    epoch_losses = epoch_losses.append(epoch_loss_dict, ignore_index=True)
     print(f'Epoch: {epoch}, loss: {epoch_loss}')
-
-    model_filename = output_path / Path(f'model_epoch_{epoch}.pt')
-    torch.save(model.state_dict(), model_filename)
 
     losses_filename = output_path / Path('train_loss.csv')
     epoch_losses.to_csv(losses_filename)
@@ -115,6 +119,10 @@ for epoch in tqdm(range(NUM_EPOCHS)):
     sample_filename = output_path / Path(f'epoch_{epoch}.jpg')
     sample_from_model_and_plot(model, noise_scheduler, TIMESTEPS, IMAGE_SIZE, device, title=sample_title, save_path=sample_filename)
 
+    if CHECKPOINT_EVERY != 0:
+        if epoch % CHECKPOINT_EVERY == 0:
+            checkpoint_path = output_path / Path(f'model_epoch_{epoch}.pt')
+            save_checkpoint('ddpm', epoch, model, optimizer, epoch_loss, checkpoint_path)
 
 
 

@@ -72,15 +72,35 @@ def train_batch(data: torch.Tensor, timesteps, model, noise_scheduler, optimizer
     return batch_loss.item()
 
 
-def create_or_load_model(model_state_dict_path):
-    model = SimpleUnet(3, out_dim=1, time_emb_dim=32)
-    if model_state_dict_path is not None:
-        model_state_dict_path = Path(model_state_dict_path)
-        if not model_state_dict_path.exists():
-            raise FileNotFoundError(f'mode file {model_state_dict_path} was not found!')
+def save_checkpoint(model_name, epoch, model, optimizer, loss, checkpoint_path):
+    checkpoint = {
+        'model_name': model_name,
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'loss': loss,
+    }
 
-        model.load_state_dict(torch.load(model_state_dict_path))
-    return model
+    torch.save(checkpoint, checkpoint_path)
+
+
+def load_checkpoint(checkpoint_path):
+    checkpoint_path = Path(checkpoint_path)
+    if not checkpoint_path.exists():
+        raise FileNotFoundError(f'mode file {checkpoint_path} was not found!')
+
+    checkpoint = torch.load(checkpoint_path)
+    return checkpoint
+
+
+def update_model_and_optimizer_from_checkpoint(checkpoint_path, model, optimizer):
+    print('Loading checkpoint: ', end='')
+    checkpoint_dict = load_checkpoint(checkpoint_path)
+    print(f'model {checkpoint_dict["model_name"]}, epoch {checkpoint_dict["epoch"]}, last loss {checkpoint_dict["loss"]}')
+    model.load_state_dict(checkpoint_dict['model_state_dict'])
+    optimizer.load_state_dict(checkpoint_dict['optimizer_state_dict'])
+    model.eval()
+
 
 
 #
