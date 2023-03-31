@@ -78,12 +78,20 @@ model.to(device)
 # == Optimizer and loss ==
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
+# == initial sample - before train ==
+model.train(False)
+sample_title = f'Initial sample - Before train'
+sample_filename = output_path / Path(f'epoch_0.jpg')
+sample_from_model_and_plot(model, noise_scheduler, TIMESTEPS, IMAGE_SIZE, device, title=sample_title,
+                           save_path=sample_filename)
+
 # == Train loop ==
 epoch_losses = pd.DataFrame(columns=['epoch', 'loss'])
 for epoch in tqdm(range(NUM_EPOCHS)):
     epoch += 1
     batch_losses = []
 
+    model.train()
     for i, data in enumerate(cats_dl):
         batch_loss = train_batch(data, TIMESTEPS, model, noise_scheduler, optimizer, device)
         batch_losses.append(batch_loss)
@@ -91,6 +99,8 @@ for epoch in tqdm(range(NUM_EPOCHS)):
         if ONE_BATCH_PER_EPOCH:
             break
 
+    # Sample from model and report losses
+    model.train(False)
     epoch_loss = {'epoch': epoch, 'loss': np.average(batch_losses)}
     epoch_losses = epoch_losses.append(epoch_loss, ignore_index=True)
     print(f'Epoch: {epoch}, loss: {epoch_loss}')

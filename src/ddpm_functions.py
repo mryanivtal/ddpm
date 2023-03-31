@@ -80,7 +80,6 @@ def create_or_load_model(model_state_dict_path):
             raise FileNotFoundError(f'mode file {model_state_dict_path} was not found!')
 
         model.load_state_dict(torch.load(model_state_dict_path))
-        model.eval()
     return model
 
 
