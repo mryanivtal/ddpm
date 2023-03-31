@@ -88,7 +88,7 @@ if START_FROM_MODEL is not None:
 model.to(device)
 
 # == initial sample - before train ==
-model.eval()
+# model.eval()
 sample_title = f'Initial sample - Before train'
 sample_filename = output_path / Path(f'epoch_0.jpg')
 sample_from_model_and_plot(model, noise_scheduler, TIMESTEPS, IMAGE_SIZE, device, title=sample_title,
@@ -104,7 +104,7 @@ for epoch in tqdm(range(NUM_EPOCHS)):
     epoch += 1
     batch_losses = []
 
-    model.train()
+    # model.train()
     for i, data in enumerate(cats_dl):
         batch_loss = train_batch(data, TIMESTEPS, model, noise_scheduler, optimizer, device)
         batch_losses.append(batch_loss)
@@ -113,7 +113,7 @@ for epoch in tqdm(range(NUM_EPOCHS)):
             break
 
     # Sample from model, report losses, save checkpoint
-    model.eval()
+    # model.eval()
     epoch_loss = np.average(batch_losses)
     epoch_loss_dict = {'epoch': epoch, 'loss': epoch_loss}
     epoch_losses = epoch_losses.append(epoch_loss_dict, ignore_index=True)
