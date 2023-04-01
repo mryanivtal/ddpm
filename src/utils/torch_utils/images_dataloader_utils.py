@@ -5,8 +5,8 @@ from torch.utils.data import DataLoader
 import numpy as np
 import torchvision.transforms as transforms
 
-from common_utils.torch_utils.images_dataset import ImagesDataset
-from common_utils.torch_utils.images_in_mem_dataset import ImagesInMemDataset
+from .images_dataset import ImagesDataset
+from .images_in_mem_dataset import ImagesInMemDataset
 
 
 def seed_init_fn(seed=1):
@@ -39,12 +39,10 @@ def create_image_dataloader(dataset_dir: str, batch_size=50, worker_init_fn=seed
         raise FileNotFoundError(f'Input data folder does not exist: {Path(dataset_dir).absolute()}')
 
     data_transforms = get_image_transforms()
-
     if not in_mem_dataset:
         image_ds = ImagesDataset(dataset_dir, transforms=data_transforms)
     else:
         image_ds = ImagesInMemDataset(dataset_dir, transforms=data_transforms)
 
-    image_dl = DataLoader(image_ds, batch_size=batch_size, shuffle=True, worker_init_fn=worker_init_fn,
-                          num_workers=num_workers)
+    image_dl = DataLoader(image_ds, batch_size=batch_size, shuffle=True, worker_init_fn=worker_init_fn, num_workers=num_workers)
     return image_dl

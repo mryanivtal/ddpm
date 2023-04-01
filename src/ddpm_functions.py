@@ -3,8 +3,9 @@ from pathlib import Path
 import torch
 from matplotlib import pyplot as plt
 import torch.nn.functional as F
-from common_utils.torch_utils.torch_pil_utils import display_images_from_tensor
-from dataloader_utils import get_reverse_image_transforms
+
+from src.utils.torch_utils.images_dataloader_utils import get_reverse_image_transforms
+from src.utils.torch_utils.torch_pil_utils import display_images_from_tensor
 
 
 def get_loss(noise_scheduler, model, x_0, t, device):
