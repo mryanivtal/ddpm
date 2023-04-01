@@ -12,7 +12,7 @@ from ddpm_functions import train_batch, sample_from_model_and_plot, \
     update_model_from_checkpoint, update_optim_from_checkpoint
 from noise_scheduler import NoiseScheduler
 from model_parts.simple_unet import SimpleUnet
-from src.utils.common_utils.common_logger import get_logger
+from utils.common_utils.common_logger import get_logger
 from utils.torch_utils.images_dataloader_utils import seed_init_fn, create_image_dataloader
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
