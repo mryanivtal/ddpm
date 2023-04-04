@@ -1,2 +1,2 @@
-# Denoising Diffusion Probabalistic models
-unofficial implementation in Pytorch
+# Denoising Diffusion Probabilistic models
+Unofficial implementation in Pytorch
